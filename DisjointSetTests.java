@@ -201,7 +201,9 @@ public class DisjointSetTests {
     }
 
     /**
-     * Performs a batch union between consecutive nodes in a collection
+     * Performs a batch union between consecutive nodes in a collection such that
+     * every single element in the disjoint set are all in one set (they have one
+     * representative)
      * 
      * @return true if no assertions fail
      * @throws Exception if any assertions fail
