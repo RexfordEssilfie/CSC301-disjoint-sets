@@ -15,7 +15,7 @@
 */
 
 /**
- * A DisjointNode is a disjoint tree within a disjoint forest
+ * A DisjointNode is an element within a member set of a disjoint set
  * 
  * @param <T> T, any object
  */
@@ -99,22 +99,28 @@ class DisjointNode<T> {
 /** DisjointSet class implements disjoint set operations as static methods */
 public class DisjointSet {
 
+    /**
+     * makeSet creates a new set whose only member is node.
+     * 
+     * @param <T>
+     * @param node, a DisjointNode
+     */
     public static <T> void makeSet(DisjointNode<T> node) {
         node.setParent(node);
         node.setRank(0);
     }
 
     /**
-     * findSet finds the root element of a given disjoint set, and uses path
-     * compression
+     * findSet returns a pointer to the representative of the (unique) set
+     * containing x (applying path compression after retrieval)
      * 
      * @param node, a DisjointNode (should not be null)
-     * @return the root or representative node of the tree
+     * @return a pointer to the representative node of the set containing x
      * @throws NullPointerException if node is null
      * 
      */
-    public static <T> DisjointNode<T> findSet(DisjointNode<T> node) {
-        DisjointNode<T> current = node;
+    public static <T> DisjointNode<T> findSet(DisjointNode<T> x) {
+        DisjointNode<T> current = x;
 
         if (current != current.getParent()) {
             current.setParent(findSet(current.getParent()));
@@ -124,32 +130,33 @@ public class DisjointSet {
     }
 
     /**
-     * linkTrees combines two DisjointNodes into one
+     * linkTrees combines two DisjointNodes into one using union by rank heuristic
      * 
-     * @param nodeA, a DisjointNode
-     * @param nodeB, a DisjointNode
-     * @throws NullPointerException if either nodeA or nodeB is null
+     * @param x, a DisjointNode
+     * @param y, a DisjointNode
+     * @throws NullPointerException if either x or y is null
      */
-    private static <T> void linkTrees(DisjointNode<T> nodeA, DisjointNode<T> nodeB) {
-        if (nodeA.getRank() > nodeB.getRank()) {
-            nodeB.setParent(nodeA);
+    private static <T> void linkTrees(DisjointNode<T> x, DisjointNode<T> y) {
+        if (x.getRank() > y.getRank()) {
+            y.setParent(x);
         } else {
-            nodeA.setParent(nodeB);
+            x.setParent(y);
 
-            if (nodeA.getRank() == nodeB.getRank()) {
-                nodeB.setRank(nodeB.getRank() + 1);
+            if (x.getRank() == y.getRank()) {
+                y.setRank(y.getRank() + 1);
             }
         }
     }
 
     /**
-     * union combines two disjoint sets into one
+     * union unites the dynamic sets that contain x and y, say Sx and Sy, into a new
+     * set that is the union of these two sets
      * 
-     * @param nodeA, a DisjointNode
-     * @param nodeB, a DisjointNode
-     * @throws NullPointerException if nodeA or nodeB is null
+     * @param x, a DisjointNode
+     * @param y, a DisjointNode
+     * @throws NullPointerException if x or y is null
      */
-    public static <T> void union(DisjointNode<T> nodeA, DisjointNode<T> nodeB) {
-        linkTrees(findSet(nodeA), findSet(nodeB));
+    public static <T> void union(DisjointNode<T> x, DisjointNode<T> y) {
+        linkTrees(findSet(x), findSet(y));
     }
 }
